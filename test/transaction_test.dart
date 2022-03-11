@@ -51,7 +51,7 @@ main() {
       test('computes virtual size', () {
         valids.forEach((f) {
           final txHex =
-              (f['whex'] != null && f['whex'] != '') ? f['whex'] : f['hex'];
+          (f['whex'] != null && f['whex'] != '') ? f['whex'] : f['hex'];
           final transaction = Transaction.fromHex(txHex);
           expect(transaction.virtualSize(), f['virtualSize']);
         });
@@ -72,13 +72,13 @@ main() {
       test('defaults to empty script, and 0xffffffff SEQUENCE number', () {
         final tx = new Transaction();
         tx.addInput(prevTxHash, 0);
-        expect(tx.ins[0].script.length, 0);
+        expect(tx.ins[0].script!.length, 0);
         expect(tx.ins[0].sequence, 0xffffffff);
       });
       (fixtures['invalid']['addInput'] as List<dynamic>).forEach((f) {
         test('throws on ' + f['exception'], () {
           final tx = new Transaction();
-          final hash = HEX.decode(f['hash']);
+          final hash = HEX.decode(f['hash']) as Uint8List;
           try {
             expect(tx.addInput(hash, f['index']), isArgumentError);
           } catch (err) {
@@ -98,7 +98,7 @@ main() {
       verify(f) {
         test('should return the id for ${f['id']} (${f['description']})', () {
           final txHex =
-              (f['whex'] != null && f['whex'] != '') ? f['whex'] : f['hex'];
+          (f['whex'] != null && f['whex'] != '') ? f['whex'] : f['hex'];
           final tx = Transaction.fromHex(txHex);
           expect(HEX.encode(tx.getHash()), f['hash']);
           expect(tx.getId(), f['id']);
@@ -112,10 +112,10 @@ main() {
       verify(f) {
         test(
             'should return ${f['coinbase']} for ${f['id']} (${f['description']})',
-            () {
-          final tx = Transaction.fromHex(f['hex']);
-          expect(tx.isCoinbase(), f['coinbase']);
-        });
+                () {
+              final tx = Transaction.fromHex(f['hex']);
+              expect(tx.isCoinbase(), f['coinbase']);
+            });
       }
 
       valids.forEach(verify);
@@ -125,13 +125,13 @@ main() {
       (fixtures['hashForSignature'] as List<dynamic>).forEach((f) {
         test(
             'should return ${f['hash']} for ${f['description'] != null ? 'case "' + f['description'] + '"' : f['script']}',
-            () {
-          final tx = Transaction.fromHex(f['txHex']);
-          final script = bscript.fromASM(f['script']);
-          expect(
-              HEX.encode(tx.hashForSignature(f['inIndex'], script, f['type'])),
-              f['hash']);
-        });
+                () {
+              final tx = Transaction.fromHex(f['txHex']);
+              final script = bscript.fromASM(f['script']);
+              expect(
+                  HEX.encode(tx.hashForSignature(f['inIndex'], script, f['type'])),
+                  f['hash']);
+            });
       });
     });
   });
@@ -152,7 +152,7 @@ Transaction fromRaw(raw, [isWitness]) {
   tx.locktime = raw['locktime'];
 
   (raw['ins'] as List<dynamic>).asMap().forEach((indx, txIn) {
-    final txHash = HEX.decode(txIn['hash']);
+    final txHash = HEX.decode(txIn['hash']) as Uint8List;
     var scriptSig;
 
     if (txIn['data'] != null) {
